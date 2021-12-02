@@ -6,7 +6,7 @@ We're dealing with network connections, so we will need to import the socket mod
 
 ![image](https://user-images.githubusercontent.com/86580417/144463675-011563b7-1c85-409d-90af-f318d3e07f7d.png)
 
-Sockets are found everywhere and are the method that most networked devices communicate. For futher details check out ![link](https://docs.python.org/3/library/socket.html)
+Sockets are found everywhere and are the method that most networked devices communicate. For futher details check out ![this link](docs.python.org/3/library/socket.html)
 
 That info aside, let's get to some code:
 
