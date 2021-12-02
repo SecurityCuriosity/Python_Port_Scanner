@@ -45,4 +45,4 @@ Enter the IP to scan: 192.168.18.132
 Port 22:        Open
 ```
 
-# It was a success! ...but there is a problem. It's incredibly slow. If you've ever used Nmap you'll recognize just how slow our port scanner is so far. Feel free to interrupt the program execution with Ctrl+C 
+## It was a success! ...but there is a problem. It's incredibly slow. If you've ever used Nmap you'll recognize just how slow our port scanner is so far. Feel free to interrupt the program execution with Ctrl+C 
