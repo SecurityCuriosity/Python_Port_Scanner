@@ -46,3 +46,17 @@ Port 22:        Open
 ```
 
 ## It was a success! ...but there is a problem. It's incredibly slow. If you've ever used Nmap you'll recognize just how slow our port scanner is so far. Feel free to interrupt the program execution with Ctrl+C 
+
+## Let's add a timeout on the connection to speed things up
+
+'''Python
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(0.1) #<------ Add this line
+        res = sock.connect_ex((remotehost, port)) #Returns 0 if connection is successful
+'''
+
+## Perhaps we could use hyperthreading? 
+
+```Python
+import threading
+```
