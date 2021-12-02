@@ -15,17 +15,20 @@ That info aside, let's get to some code:
 For now let's only focus on a single remote host:
 
 ```Python
-for port in range(1,1025):
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        res = sock.connect_ex((remotehost, port))
-        if res == 0:
-            print(f"Port {port}:        Open")
-        sock.close
+#Prompt user for the ip address
+remotehost = input("Enter the IP to scan: ")
 ```
 
 For now we'll also only scan ports 1-1024:
 
-![image](https://user-images.githubusercontent.com/86580417/144512041-348ebc97-4ea8-47d1-8647-7e96ef205432.png)
+```Python
+for port in range(1,1025):
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        res = sock.connect_ex((remotehost, port)) #Returns 0 if connection is successful
+        if res == 0:
+            print(f"Port {port}:        Open")
+        sock.close
+```
 
 Let's take a look at
 ```Python
