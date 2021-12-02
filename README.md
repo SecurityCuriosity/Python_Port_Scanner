@@ -18,6 +18,11 @@ For now we'll also only scan ports 1-1024:
 
 ![image](https://user-images.githubusercontent.com/86580417/144512041-348ebc97-4ea8-47d1-8647-7e96ef205432.png)
 
+Let's take a look at
+'''Python
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+'''
+
 Let's give it a try!
 
 ![image](https://user-images.githubusercontent.com/86580417/144513254-e4ce6e71-6535-4c8e-9477-b5fd05175593.png)
