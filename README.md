@@ -62,7 +62,7 @@ When we run this we'll see that there is a difference in speed, but that it's st
 We'll need to import a few modules, so add the following to your imports.
 ```Python
 import threading
-from queue import Queue as q
+from queue import Queue
 ```
 
 Let's go ahead and clean up our code before we start implementing any functional changes. Let's take an OOP approach:
@@ -72,7 +72,7 @@ After a bit of tidying up and a function definition, your code should now look l
 ```Python
 import socket
 import threading
-from queue import Queue as q
+from queue import Queue
 import sys
 from datetime import datetime as dt
 
@@ -97,4 +97,65 @@ for port in range(1,1025):
     if(scanport(remotehost, port) == 0):
         print(f"Port {port}:        Open")
 ```
+
+### First, we will assign the port range to the queue to ensure they are accessed in order by the threads:
+
+Add the following line to initialize the queue:
+```Python
+q = Queue()
+```
+
+Add the following to add the ports to the queue:
+```Python
+for port in range(1,1025):
+    q.put(port)
+```
+    
+### From this point we have to create a 'scanner' function for our threads. This function will check the queue for the next port number, scan the port, and print the result
+```Python
+def scanner():
+    while not q.empty(): #Scan until out of ports
+        port = q.get() #Gets the next item in the queue
+        if(scanport(remotehost, port) == 0): #Check if connection was successful
+            print(f"Port {port}:        Open")
+```
+
+### Now we will define the main driver for our scanner and our multithreading
+
+```Python
+def run_portscanner(threads, queue):
+    for port in range(1,1025):
+        queue.put(port)
+    
+    thread_list = []
+
+    for num in range(threads):
+        thread = threading.Thread(target=scanner) #Identify the function that each thread will run
+        thread_list.append(num) #List for thread management
+
+    for thread in thread_list:
+        thread.start() #Starts the threaded operation
+    
+    for thread in thread_list:
+        thread.join() #This prevents the parent thread from terminating until the child threads are complete
+```
+
+### Alright. Let's see if this works. Let's call our driver function and see the magic happen. 
+
+```Python
+run_portscanner(150, q)
+```
+
+In this case I assigned 150 threads to the running process. Your system will limit the ammount of threads you can utilize. After running the scanner with a higher number of threads (800 in my case) I found that the output was getting mixed up. This is apparently from multiple threads attempting to access a variable at the same time. You can fix this bby placing locks on variable. This essentiall forces the multithreading to wait until the resource is unlocked to access it. This can be implemented like so:
+
+```Python
+printing_lock = threading.Lock()
+```
+and
+```Python
+        if(scanport(remotehost, port) == 0): #Check if connection was successful
+            with printing_lock:
+                print(f"Port {port}:        Open")
+```
+
 
