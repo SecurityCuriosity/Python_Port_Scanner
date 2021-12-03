@@ -49,14 +49,52 @@ Port 22:        Open
 
 ## Let's add a timeout on the connection to speed things up
 
-'''Python
+```Python
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.settimeout(0.1) #<------ Add this line
         res = sock.connect_ex((remotehost, port)) #Returns 0 if connection is successful
-'''
+```
+
+When we run this we'll see that there is a difference in speed, but that it's still significantly slower than any commonly used scanner
 
 ## Perhaps we could use hyperthreading? 
 
+We'll need to import a few modules, so add the following to your imports.
 ```Python
 import threading
+from queue import Queue as q
 ```
+
+Let's go ahead and clean up our code before we start implementing any functional changes. Let's take an OOP approach:
+
+After a bit of tidying up and a function definition, your code should now look like this:
+
+```Python
+import socket
+import threading
+from queue import Queue as q
+import sys
+from datetime import datetime as dt
+
+#Prompt user for the ip address
+remotehost = input("Enter the IP to scan: ")
+
+print("-" * 60 + f"\nPlease wait. Scanning the remote host: {remotehost}\n" + "-" * 60)
+
+# A function to scan a single port
+def scanport(remotehost, port):
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(0.1)
+        res = sock.connect_ex((remotehost, port)) #Returns 0 if connection is successful
+        sock.close
+        return res
+    except socket.error:
+        print("Error connecting to remote host")
+        sys.exit()
+
+for port in range(1,1025):
+    if(scanport(remotehost, port) == 0):
+        print(f"Port {port}:        Open")
+```
+
