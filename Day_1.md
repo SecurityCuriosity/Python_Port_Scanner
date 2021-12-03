@@ -160,5 +160,5 @@ and
                 print(f"Port {port}:        Open")
 ```
 
-##Well, that wraps up day one. See the full code in the repo. Feel free to critique and improve!
+## Well, that wraps up day one. See the full code in the repo. Feel free to critique and improve!
 
