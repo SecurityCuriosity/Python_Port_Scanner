@@ -146,7 +146,9 @@ def run_portscanner(threads, queue):
 run_portscanner(150, q)
 ```
 
-In this case I assigned 150 threads to the running process. Your system will limit the ammount of threads you can utilize. After running the scanner with a higher number of threads (800 in my case) I found that the output was getting mixed up. This is apparently from multiple threads attempting to access a variable at the same time. You can fix this bby placing locks on variable. This essentiall forces the multithreading to wait until the resource is unlocked to access it. This can be implemented like so:
+In this case I assigned 150 threads to the running process. Your system will limit the ammount of threads you can utilize. After running the scanner with a higher number of threads (800 in my case) I found that the output was getting mixed up. This is apparently from multiple threads attempting to access a variable at the same time. 
+
+You can fix this by placing locks on variables. This forces the multithreading to wait until the resource is unlocked to access it. This can be implemented like so:
 
 ```Python
 printing_lock = threading.Lock()
@@ -158,4 +160,5 @@ and
                 print(f"Port {port}:        Open")
 ```
 
+##Well, that wraps up day one. See the full code in the repo. Feel free to critique and improve!
 
