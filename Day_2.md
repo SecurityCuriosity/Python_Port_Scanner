@@ -76,7 +76,67 @@ def main(argv = []):
 main()
 ```
 
-# Alright! Hopefully that all works for you. Check the Day_1.5-Port_Scanner.py if you have issues. 
+## Alright! Hopefully that all works for you. Check the Day_1.5-Port_Scanner.py if you have issues. 
 
+
+## Now let's get to our new functionality - Banner Grabbing! 
+
+#### The socket module has a recv method that captures a certain number of bytes to receive from the socket. We should probablly use that.
+
+The socket method that we used before, **socket.connect_ex** is faster, but it does not play as nicely on some connections (not 100% sure why...need to investigate). So, we're going to build a new funtion that will connect using the the **socket.connect** function. 
+```Python
+def bannergrab(remotehost, port):
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.settimeout(2.0)
+    try:
+        sock.connect((remotehost, port))
+        sock.send('Test\r\n'.encode())
+        banner = (sock.recv(1024)).decode('utf-8')
+        sock.close()    
+    except socket.error as error:
+        print(error)
+        sys.exit()
+    return banner
+```
+
+Most of what we have here is similar to our previous **scanport()** function. With the exception of:
+```Python
+        sock.connect((remotehost, port))
+        sock.send('Test\r\n'.encode())
+        banner = (sock.recv(1024)).decode(errors="ignore")
+```
+For this we are using **socket.connect()** instead of **socket.connect_ex()**. Both will owrk, but i was noticing some oddities when connecting to services like SSH when using **connect_ex()**. 
+
+**sock.send()** is our first new addition. This send whatever is passed as an argument to the port on the receiving end of the connection. This output needs to be converted to bytes before sending. This is accomplished through the **encode()** function (this defaults to UTF-8 encoding. Other encoding schemes can be specified.)
+
+The socket then awaits for a response. The response can be accessed with **sock.receive()** the **1024** specifies the maximum number of bytes to receive. Since this is received as bytes it must be decoded through the **decode()** command. This defaults to UFT-8 as well. We may receive other types of input and the UTF-8 codecs would not be able to decode it. So, instead of filling our screen woth errors, we can add **errors="ignore** asa parameter to decoed(). 
+
+### Need to make sure the bannergrabbing only runs when a port is active. We can use our **scanner()** method to accomplish this. 
+```Python
+def scanner():
+    while not q.empty(): #Scan until out of ports
+        port = q.get() #Gets the next item in the queue
+        r = scanport(remotehost, port)
+        if( r == 0): #Check if connection was successful
+            with printing_lock:
+                print(f"Port {port}:        Open", end="")
+                b = bannergrab(remotehost, port)
+                print("\t\t", b)
+```
+
+You can see in the code snippet above that we've added the following two lines:
+```Python
+                b = bannergrab(remotehost, port)
+                print("\t\t", b)
+```
+
+We only want the banner grabbing function to run when there is a successful connection, so we wait for a successful connection. This is indicated by the fucntion existing under the **if( r == 0): ** statement. 
+
+### That wraps up the banner grabbing portion. Run your code, and see if you get the expected output. Something like this:
+```
+Port 22:        Open             SSH-2.0-OpenSSH_8.2p1 Ubuntu-4ubuntu0.3
+```
+
+### See Day_2-Port_Scanner.py for any clarification 
 
 
